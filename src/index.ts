@@ -46,9 +46,9 @@ async function getPublicKey(accountPath: string, hrp: string) {
 	const avalanche = new AvalancheApp(transport)
 	const pubkaddr = await avalanche.getAddressAndPubKey(accountPath, false, hrp)
 	const pubkHex = pubkaddr.publicKey.toString('hex')
-	console.log(pubkHex)
-	console.log(pubkaddr.address)
-	console.log(publicKeyToEthereumAddressString(pubkHex))
+	console.log("public key:", pubkHex)
+	console.log("flare address", pubkaddr.address)
+	console.log("ethereum address", publicKeyToEthereumAddressString(pubkHex))
 }
 
 getPublicKey("m/44'/60'/0'/0/0", "flare")
