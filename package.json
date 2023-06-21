@@ -24,9 +24,12 @@
     "@ledgerhq/hw-transport-node-hid": "^6.0.0",
     "add": "^2.0.6",
     "bech32": "^2.0.0",
+    "commander": "^11.0.0",
     "elliptic": "^6.5.4",
     "ethereumjs-util": "^7.1.5",
     "ts-node": "^10.9.1",
-    "yarn": "^1.22.19"
+    "yarn": "^1.22.19",
+    "logging": "^3.3.0"
+
   }
 }
