@@ -9,15 +9,8 @@ function translatePublicKey(pubk: string) {
 	return compressPublicKey(x, y).toString('hex')
 }
 
-class SignatureRequest {
-    message: string
-}
 
-class Transaction {
-    signatureRequests: SignatureRequest[]
-}
-
-async function blindSign(message: string) {
+async function blindSign(message: string): Promise<string> {
 	const messageBuf = Buffer.from(message, 'hex')
 	const transport = await TransportNodeHid.open(undefined)
 	const avalanche = new AvalancheApp(transport)
@@ -34,13 +27,20 @@ async function blindSign(message: string) {
 	console.log("public key:", addressAndPubk.publicKey.toString('hex'))
 	console.log("public key:", translatePublicKey(pubk.toString('hex')))
 	console.log("address:", addr)
+    return signature
 }
 
 export async function signHash(file: string) {
     const json = fs.readFileSync(file, 'utf8')
-    const tx: Transaction = JSON.parse(json)
+    const tx: any = JSON.parse(json)
     if (tx && tx.signatureRequests && tx.signatureRequests.length > 0) {
-        await blindSign(tx.signatureRequests[0].message)
+        const signature = await blindSign(tx.signatureRequests[0].message)
+        tx.signature = signature
+        let outFile = file.replace('unsignedTx.json', 'signedTx.json')
+        if (outFile === file) {
+            outFile = file + '.signed'
+        }
+        fs.writeFileSync(outFile, JSON.stringify(tx, null, 2))
     } else {
         console.log("Invalid transaction file")
     }

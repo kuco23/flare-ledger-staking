@@ -4,7 +4,7 @@ import { publicKeyToEthereumAddressString } from './utils'
 import fs from 'fs'
 
 
-export class PublicKeyData {
+export class Context {
     publicKey: string
     flareAddress: string
     ethAddress: string
@@ -24,7 +24,7 @@ export async function getPublicKey(accountPath: string, hrp: string) {
 	const avalanche = new AvalancheApp(transport)
 	const pubkaddr = await avalanche.getAddressAndPubKey(accountPath, false, hrp)
 	const pubkHex = pubkaddr.publicKey.toString('hex')
-    const data = new PublicKeyData(pubkHex, pubkaddr.address, publicKeyToEthereumAddressString(pubkHex), hrp)
+    const data = new Context(pubkHex, pubkaddr.address, publicKeyToEthereumAddressString(pubkHex), hrp)
     // save to file
-    fs.writeFileSync('publicKey.json', JSON.stringify(data, null, 2))
+    fs.writeFileSync('ctx.json', JSON.stringify(data, null, 2))
 }
