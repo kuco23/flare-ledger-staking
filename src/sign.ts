@@ -1,40 +1,38 @@
+import fs from 'fs'
 import TransportNodeHid from '@ledgerhq/hw-transport-node-hid'
 import AvalancheApp from '@avalabs/hw-app-avalanche'
-import { recoverPublicKey, recoverTransactionSigner, prefix0x, decodePublicKey, compressPublicKey, publicKeyToEthereumAddressString } from './utils'
-import * as util from 'ethereumjs-util'
-import fs from 'fs'
-
-function translatePublicKey(pubk: string) {
-	const [x, y] = decodePublicKey(pubk)
-	return compressPublicKey(x, y).toString('hex')
-}
+import { recoverTransactionPublicKey, recoverTransactionSigner, prefix0x, standardizePublicKey, expandDerivationPath } from './utils'
 
 
-async function blindSign(message: string): Promise<string> {
-	const messageBuf = Buffer.from(message, 'hex')
+// If blind is true, then the message is a hash of the transaction buffer,
+// otherwise the message is the transaction buffer itself.
+async function ledgerSign(message: string, derivationPath: string, blind: boolean = true): Promise<{ 
+	signature: string, address: string, publicKey: string
+}> {
+	const messageBuffer = Buffer.from(message, 'hex')
 	const transport = await TransportNodeHid.open(undefined)
 	const avalanche = new AvalancheApp(transport)
-	const accountPath = "m/44'/60'/0'"
-	const signPaths = ["0/0"]
-	const resp = await avalanche.signHash(accountPath, signPaths, messageBuf)
-	const signature = resp.signatures.get("0/0").toString('hex')
-	console.log("signature:", signature)
 
-	const derivationPath = "m/44'/60'/0'/0/0"
-	const addressAndPubk = await avalanche.getAddressAndPubKey(derivationPath, false, 'costwo')
-	const pubk = recoverPublicKey(messageBuf, prefix0x(signature))
-	const addr = recoverTransactionSigner(messageBuf, prefix0x(signature))
-	console.log("public key:", addressAndPubk.publicKey.toString('hex'))
-	console.log("public key:", translatePublicKey(pubk.toString('hex')))
-	console.log("address:", addr)
-    return signature
+	const { accountPath, signPath } = expandDerivationPath(derivationPath)
+	const resp = blind ? 
+		await avalanche.signHash(accountPath, [signPath], messageBuffer) : 
+		await avalanche.sign(accountPath, [signPath], messageBuffer)
+
+	const signature = resp.signatures.get("0/0").toString('hex')
+	const pubk = recoverTransactionPublicKey(messageBuffer, prefix0x(signature))
+	const addr = recoverTransactionSigner(messageBuffer, prefix0x(signature))
+    return {
+		signature: signature,
+		address: addr,
+		publicKey: standardizePublicKey(pubk.toString('hex'))
+	}
 }
 
-export async function signHash(file: string) {
+export async function signHash(file: string, derivationPath: string, blind: boolean = true) {
     const json = fs.readFileSync(file, 'utf8')
     const tx: any = JSON.parse(json)
     if (tx && tx.signatureRequests && tx.signatureRequests.length > 0) {
-        const signature = await blindSign(tx.signatureRequests[0].message)
+        const { signature } = await ledgerSign(tx.signatureRequests[0].message, derivationPath, blind)
         tx.signature = signature
         let outFile = file.replace('unsignedTx.json', 'signedTx.json')
         if (outFile === file) {

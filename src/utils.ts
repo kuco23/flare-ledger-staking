@@ -45,6 +45,11 @@ export function compressPublicKey(x: Buffer, y: Buffer): Buffer {
   "hex")
 }
 
+export function standardizePublicKey(pubk: string) {
+	const [x, y] = decodePublicKey(pubk)
+	return compressPublicKey(x, y).toString('hex')
+}
+
 function publicKeyToBech32AddressBuffer(x: Buffer, y: Buffer) {
   const compressed = compressPublicKey(x, y)
   return ethutil.ripemd160(ethutil.sha256(compressed), false)
@@ -78,7 +83,7 @@ export function recoverTransactionSigner(message: Buffer, signature: string) {
     return signer;
 }
 
-export function recoverPublicKey(message: Buffer, signature: string): Buffer {
+export function recoverTransactionPublicKey(message: Buffer, signature: string): Buffer {
   const split = ethutil.fromRpcSig(signature)
   return ethutil.ecrecover(message, split.v, split.r, split.s)
 }
@@ -121,4 +126,10 @@ export function integerToDecimal(int: string, n: number): string {
   const part1 = int.slice(0,-n)
   const part2 = int.slice(-n)
   return part1 + '.' + part2
+}
+
+export function expandDerivationPath(derivationPath: string) {
+	const signPath = derivationPath.substring(-3)
+	const accountPath = derivationPath.substring(0, derivationPath.length - 3)
+	return { accountPath: accountPath, signPath: signPath }
 }
