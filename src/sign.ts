@@ -7,7 +7,7 @@ import { recoverTransactionPublicKey, recoverTransactionSigner, prefix0x, standa
 
 // If blind is true, then the message is a hash of the transaction buffer,
 // otherwise the message is the transaction buffer itself.
-async function ledgerSign(message: string, derivationPath: string, blind: boolean = true): Promise<{ 
+async function ledgerSign(message: string, derivationPath: string, blind: boolean = true): Promise<{
 	signature: string, address: string, publicKey: string
 }> {
 	const messageBuffer = Buffer.from(message, 'hex')
@@ -15,13 +15,20 @@ async function ledgerSign(message: string, derivationPath: string, blind: boolea
 	const avalanche = new AvalancheApp(transport)
 
 	const { accountPath, signPath } = expandDerivationPath(derivationPath)
-	const resp = blind ? 
-		await avalanche.signHash(accountPath, [signPath], messageBuffer) : 
-		await avalanche.sign(accountPath, [signPath], sha256(messageBuffer))
-
-	const signature = resp.signatures.get(signPath).toString('hex')
-	const pubk = recoverTransactionPublicKey(messageBuffer, prefix0x(signature))
-	const addr = recoverTransactionSigner(messageBuffer, prefix0x(signature))
+	let pubk: Buffer
+	let addr: string
+	let signature: string
+	if (blind) {
+		const resp = await avalanche.signHash(accountPath, [signPath], messageBuffer)
+		signature = resp.signatures.get(signPath).toString('hex')
+		pubk = recoverTransactionPublicKey(messageBuffer, prefix0x(signature))
+		addr = recoverTransactionSigner(messageBuffer, prefix0x(signature))
+	} else {
+		const resp = await avalanche.sign(accountPath, [signPath], messageBuffer)
+		signature = resp.signatures.get(signPath).toString('hex')
+		pubk = recoverTransactionPublicKey(sha256(messageBuffer), prefix0x(signature))
+		addr = recoverTransactionSigner(sha256(messageBuffer), prefix0x(signature))
+	}
     return {
 		signature: signature,
 		address: addr,
