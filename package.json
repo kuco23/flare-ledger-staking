@@ -1,20 +1,21 @@
 {
   "name": "flare-ledger-staking",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Tool for flare staking ledger support",
   "bin": {
     "flare-ledger-staking": "bin/flare-ledger-staking"
   },
   "scripts": {
-    "build": "rimraf dist/ && yarn tsc -b"
+    "build": "yarn rimraf dist/ && yarn tsc -b"
   },
   "license": "MIT",
   "devDependencies": {
     "@swc/core": "^1.2.172",
     "@types/bech32": "^1.1.4",
     "@types/node": "^20.3.1",
-    "typescript": "^4.6.3",
-    "ts-node": "^10.9.1"
+    "rimraf": "^5.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.6.3"
   },
   "dependencies": {
     "@avalabs/hw-app-avalanche": "^0.10.1",
