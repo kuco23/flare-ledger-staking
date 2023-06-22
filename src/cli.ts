@@ -1,7 +1,7 @@
 import { Command, OptionValues } from 'commander'
 import createLogger from 'logging'
 import { initContext } from './key'
-import { signHash } from './sign'
+import { sign } from './sign'
 
 
 const DERIVATION_PATH = "m/44'/60'/0'/0/0"
@@ -16,11 +16,11 @@ export async function cli(program: Command) {
       logger.info("Context file created")
     })
   program
-    .command("sign-hash").description("Sign a transaction hash (blind signature)")
+    .command("sign-hash").description("Sign a transaction hash")
     .argument("<file>", "File to sign")
-    .option("-b, --blind <blind>", "Blind signature", true)
+    .option("-b, --blind <blind>", "Blind signature (note that non-blind signature requires nano-s and modified avalanche app)", true)
     .action(async (file: string, options: OptionValues) => {
-      await signHash(file, DERIVATION_PATH, options.blind)
+      await sign(file, DERIVATION_PATH, options.blind)
       logger.info("Transaction signed")
     })
 }

@@ -129,7 +129,7 @@ export function integerToDecimal(int: string, n: number): string {
 }
 
 export function expandDerivationPath(derivationPath: string) {
-	const signPath = derivationPath.substring(-3)
-	const accountPath = derivationPath.substring(0, derivationPath.length - 3)
+	const accountPath = derivationPath.substring(0, derivationPath.length - 4)
+	const signPath = derivationPath.substring(derivationPath.length - 3)
 	return { accountPath: accountPath, signPath: signPath }
 }
