@@ -1,25 +1,22 @@
 {
-  "name": "test-ledger-avalanche",
-  "version": "2.0.0",
-  "description": "Bootstrap your new TypeScript project with the bare minimum dependencies",
+  "name": "flare-ledger-staking",
+  "version": "0.0.0",
+  "description": "Tool for flare staking ledger support",
+  "bin": {
+    "flare-ledger-staking": "bin/flare-ledger-staking"
+  },
   "scripts": {
-    "lint": "eslint --ignore-path .gitignore .",
-    "lint:fix": "npm run lint -- --fix"
+    "build": "rimraf dist/ && yarn tsc -b"
   },
   "license": "MIT",
   "devDependencies": {
     "@swc/core": "^1.2.172",
     "@types/bech32": "^1.1.4",
     "@types/node": "^20.3.1",
-    "@typescript-eslint/eslint-plugin": "^5.21.0",
-    "@typescript-eslint/parser": "^5.21.0",
-    "eslint": "^8.33.0",
-    "eslint-config-codely": "^2.1.3",
-    "prettier": "^2.6.2",
-    "typescript": "^4.6.3"
+    "typescript": "^4.6.3",
+    "ts-node": "^10.9.1"
   },
   "dependencies": {
-    "@avalabs/avalanche-wallet-sdk": "^0.19.1",
     "@avalabs/hw-app-avalanche": "^0.10.1",
     "@ledgerhq/hw-transport-node-hid": "^6.0.0",
     "add": "^2.0.6",
@@ -27,9 +24,6 @@
     "commander": "^11.0.0",
     "elliptic": "^6.5.4",
     "ethereumjs-util": "^7.1.5",
-    "ts-node": "^10.9.1",
-    "yarn": "^1.22.19",
     "logging": "^3.3.0"
-
   }
 }

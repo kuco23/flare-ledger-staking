@@ -27,20 +27,20 @@ async function blindSign(message: string) {
 	console.log("address:", addr)
 }
 
-/* async function sign(unsignedTx: string) {
+async function sign(unsignedTx: string) {
 	const unsignedTxBuffer = Buffer.from(unsignedTx, 'hex')
 	const transport = await TransportNodeHid.open(undefined)
 	const avalanche = new AvalancheApp(transport)
-	const accountPath = "m/44'/60'"
-	const signPaths = ["0'/0'"]
+	const accountPath = "m/44'/60'/0'"
+	const signPaths = ["0/0"]
 	const resp = await avalanche.sign(accountPath, signPaths, unsignedTxBuffer)
-	const signature = resp.signatures.get("0'/0'").toString('hex')
+	const signature = resp.signatures.get("0/0").toString('hex')
 	console.log(signature)
 	const pubk = recoverPublicKey(util.sha256(unsignedTxBuffer), prefix0x(signature))
 	console.log("signature:", signature)
 	console.log("public key:", pubk.toString('hex'))
 }
- */
+
 async function getPublicKey(accountPath: string, hrp: string) {
 	const transport = await TransportNodeHid.open(undefined)
 	const avalanche = new AvalancheApp(transport)
@@ -51,5 +51,5 @@ async function getPublicKey(accountPath: string, hrp: string) {
 	console.log("ethereum address", publicKeyToEthereumAddressString(pubkHex))
 }
 
-//getPublicKey("m/44'/60'/0'/0/0", "costwo")
-blindSign('e0f8aa54ac77e742218470a94b226e228b06a7a43a05503bf2c80033520dbcd1')
+//getPublicKey("m/44'/60'/0'/0/0", "flare")
+sign('0000000000110000007200000000000000000000000000000000000000000000000000000000000000000000000158734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd0000000700000002540be40000000000000000000000000100000001db89a2339639a5f3fa183258cfea265e4d1cce6c0000000000000056506c6174666f726d564d207574696c697479206d6574686f64206275696c64496d706f7274547820746f20696d706f7274204156415820746f2074686520502d436861696e2066726f6d2074686520432d436861696e78db5c30bed04c05ce209179812850bbb3fe6d46d7eef3744d814c0da5552479000000015a0060607a586b1f6197671965d7c4fa45a6892f88385563510f6cc4af1853fe0000000058734f94af871c3d131b56131b6fb7a0291eacadd261e69dfb42a9cdf6f7fddd0000000500000002541b26400000000100000000')
