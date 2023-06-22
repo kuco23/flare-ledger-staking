@@ -8,6 +8,11 @@
   "scripts": {
     "build": "yarn rimraf dist/ && yarn tsc -b"
   },
+  "files": [
+    "dist",
+    "src",
+    "bin"
+  ],
   "license": "MIT",
   "devDependencies": {
     "@swc/core": "^1.2.172",
