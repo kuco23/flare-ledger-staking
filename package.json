@@ -1,6 +1,6 @@
 {
   "name": "flare-ledger-staking",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "Tool for flare staking ledger support",
   "bin": {
     "flare-ledger-staking": "bin/flare-ledger-staking"
