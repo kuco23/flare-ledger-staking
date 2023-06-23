@@ -20,7 +20,7 @@ export async function cli(program: Command) {
     .argument("<file>", "File to sign")
     .option("-b, --blind <blind>", "Blind signature (note that non-blind signature requires nano-s and modified avalanche app)", true)
     .action(async (file: string, options: OptionValues) => {
-      await sign(file, DERIVATION_PATH, options.blind)
+      await sign(file, DERIVATION_PATH, options.blind === true || options.blind === 'true')
       logger.info("Transaction signed")
     })
 }
